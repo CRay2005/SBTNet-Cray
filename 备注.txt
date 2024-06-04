@@ -1,0 +1,8 @@
+#SBTNet源码地址
+#https://github.com/JuewenPeng/SBTNet
+
+#运行SBTNet模型的命令
+python evaluation.py --root_folder TEST_ROOT_FOLDER --save_folder SAVE_FOLDER
+
+#运行改进模型的命令
+python demo.py --src_f 16.0 --tgt_f 1.8
