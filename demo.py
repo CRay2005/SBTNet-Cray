@@ -38,9 +38,9 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 
-class SBTNetFake(nn.Module):
+class SBTNet(nn.Module):
     def __init__(self):
-        super(SBTNetFake, self).__init__()
+        super(SBTNet, self).__init__()
         # 加载深度估计模型和转换模型
         self.pipe = pipeline(task="depth-estimation", model='model_cache/AI-ModelScope/dpt-large')
         # f_convert
@@ -49,8 +49,6 @@ class SBTNetFake(nn.Module):
         # 获取f_alpha.csv的原理很简单，就是随机设定一组src_f, tgt_f并计算SBTNet的虚拟大光圈图。
         # 并计算若干组alpha，depth的手动虚拟大光圈图。
         # 然后比较两个虚拟大光圈图，找到足够相似的那组alpha，depth，就成了标注数据了。
-        # 简单来说就是通过算力堆。
-        # 有点类似前段时间那个学习游戏“王者荣耀”的那个任务，有点强化学习的意味。只不过这次的任务简单得多。
         self.f_convert = torch.load('model_cache/f_alpha/model.bin')
     
     def forward(self, original:Image.Image, src_f, tgt_f):
@@ -121,7 +119,7 @@ if __name__ == '__main__':
     parser.add_argument('--tgt_f', default=1.8, type=float)
     args = parser.parse_args()
     # 创建模型
-    sbt_model = SBTNetFake()
+    sbt_model = SBTNet()
     # 读取文件名
     original_list = [f for f in list(os.walk(args.root_folder))[0][2] if f.endswith('.jpg')]
     for original_file in tqdm(original_list):
@@ -131,6 +129,6 @@ if __name__ == '__main__':
         bokeh, depth_map = sbt_model(original, args.src_f, args.tgt_f)
         # 保存
         bokeh.save(os.path.join(args.save_folder, original_file))
-        # 这里没有输出pred_alpha, 再train.py中才有相关内容
+        # 这里没有输出pred_alpha, 在train.py中才有相关内容
         # depth_map = Image.fromarray(depth_map)
         # depth_map.save(os.path.join(args.save_folder, original_file.replace('src', 'alpha').replace('jpg', 'png')))

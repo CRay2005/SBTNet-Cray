@@ -67,12 +67,12 @@ with torch.no_grad():
         src = cv2.imread(src_path).astype(np.float32)[..., ::-1] / 255
         src = torch.from_numpy(src).permute(2, 0, 1)
         
-        # 裁剪
-        # print(src.shape)
-        # _, src_l, src_w = src.shape
-        # if src_l * src_w != 1440*1920:
-        #     src = src[..., int((src_l-1920)/2):int((src_l-1920)/2)+1920, int((src_w-1440)/2):int((src_w-1440)/2)+1440]
-        # print(src.shape)
+        # 判断并裁剪输入图片的像素大小
+        print(src.shape)
+        _, src_l, src_w = src.shape
+        if src_l * src_w != 1440*1920:
+            src = src[..., int((src_l-1920)/2):int((src_l-1920)/2)+1920, int((src_w-1440)/2):int((src_w-1440)/2)+1440]
+        print(src.shape)
         # 回归原始逻辑
         filename = os.path.basename(src_path)
         id = filename.split(".")[0]
